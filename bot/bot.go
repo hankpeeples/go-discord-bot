@@ -45,25 +45,27 @@ func Start(token string) {
 
 // messageCreate will be called every time a new message is sent
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
-	utils.Logger.Infof("[%s]: %s", m.Author.Username, m.Content)
+	utils.Logger.Infof("[%s]: %s", m.Author, m.Content)
 
 	// Ignore all messages created by the bot itself
 	if m.Author.ID == s.State.User.ID {
 		return
 	}
 
-	// Only look for commands that begin with defined prefix character
-	if m.Content[0:1] == utils.Prefix {
-		// Set command to the 'command' after the prefix character
-		command := m.Content[1:]
-		// If the message is "ping" reply with "Pong!"
-		if command == "ping" {
-			s.ChannelMessageSend(m.ChannelID, "Pong!")
-		}
+	if len(m.Content) >= 1 {
+		// Only look for commands that begin with defined prefix character
+		if m.Content[0:1] == utils.Prefix {
+			// Set command to the 'command' after the prefix character
+			command := m.Content[1:]
+			// If the message is "ping" reply with "Pong!"
+			if command == "ping" {
+				s.ChannelMessageSend(m.ChannelID, "Pong!")
+			}
 
-		// If the message is "pong" reply with "Ping!"
-		if command == "pong" {
-			s.ChannelMessageSend(m.ChannelID, "Ping!")
+			// If the message is "pong" reply with "Ping!"
+			if command == "pong" {
+				s.ChannelMessageSend(m.ChannelID, "Ping!")
+			}
 		}
 	}
 }
