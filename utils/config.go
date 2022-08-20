@@ -1,10 +1,15 @@
-// Package config reads the bot configuration from the (hidden) config.json file.
-package config
+// Package utils contains utility functions needed throughout the app
+package utils
 
 import (
 	"encoding/json"
 	"os"
+
+	"github.com/withmandala/go-log"
 )
+
+// Logger initialization
+var Logger *log.Logger = log.New(os.Stdout).WithColor()
 
 type configStruct struct {
 	Token string `json:"Token"`
@@ -14,6 +19,7 @@ var conf *configStruct
 
 // ReadConfig reads the config file for the bot Token
 func ReadConfig(filepath string) (string, error) {
+	Logger.Info("Looking for discord token...")
 	// Read file content
 	content, err := os.ReadFile(filepath)
 	if err != nil {
@@ -26,5 +32,6 @@ func ReadConfig(filepath string) (string, error) {
 		return "", err
 	}
 
+	Logger.Info("Discord token received successfully!")
 	return conf.Token, nil
 }
