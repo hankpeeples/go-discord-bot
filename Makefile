@@ -1,6 +1,7 @@
 BINARY=go-discord-bot
 
 build:
+	go mod tidy
 	GOARCH=amd64 GOOS=darwin go build -o ${BINARY}-darwin main.go
 	# GOARCH=amd64 GOOS=linux go build -o ${BINARY}-linux main.go
 	# GOARCH=amd64 GOOS=windows go build -o ${BINARY}-windows main.go
