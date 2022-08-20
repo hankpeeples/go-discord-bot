@@ -11,7 +11,7 @@ run:
 clean:
 	go clean
 	rm ${BINARY}-darwin
-	rm ${BINARY}-linux
-	rm ${BINARY}-windows
+	# rm ${BINARY}-linux
+	# rm ${BINARY}-windows
 
 go: build run clean
