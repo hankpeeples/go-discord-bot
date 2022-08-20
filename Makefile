@@ -9,10 +9,10 @@ build:
 	@# GOARCH=amd64 GOOS=windows go build -o ${BINARY}-windows main.go
 
 run:
-	echo ""; ./${BINARY}-darwin
+	echo ""; ./${BINARY}-darwin config.json
 
 clean:
-	go clean
-	rm ${BINARY}-darwin
+	@go clean
+	@rm ${BINARY}-darwin
 	@# rm ${BINARY}-linux
 	@# rm ${BINARY}-windows
