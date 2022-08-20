@@ -11,6 +11,9 @@ import (
 // Logger initialization
 var Logger *log.Logger = log.New(os.Stdout).WithColor()
 
+// Prefix is the bot command character prefix
+const Prefix string = ">"
+
 type configStruct struct {
 	Token string `json:"Token"`
 }
