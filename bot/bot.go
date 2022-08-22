@@ -2,6 +2,7 @@
 package bot
 
 import (
+	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -19,6 +20,8 @@ func Start(token string) {
 		utils.Logger.Fatalf("Error creating discord session: %v", err)
 	}
 
+	// Register ready func as callback for ready events
+	dg.AddHandler(ready)
 	// Register messageCreate func as callback for message events
 	dg.AddHandler(messageCreate)
 
@@ -43,6 +46,11 @@ func Start(token string) {
 	dg.Close()
 }
 
+func ready(s *discordgo.Session, event *discordgo.Ready) {
+	// Set status message
+	s.UpdateListeningStatus(utils.Prefix + "help")
+}
+
 // messageCreate will be called every time a new message is sent
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	utils.Logger.Infof("[%s]: %s", m.Author, m.Content)
@@ -57,14 +65,19 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		if m.Content[0:1] == utils.Prefix {
 			// Set command to the 'command' after the prefix character
 			command := m.Content[1:]
-			// If the message is "ping" reply with "Pong!"
-			if command == "ping" {
-				s.ChannelMessageSend(m.ChannelID, "Pong!")
-			}
 
-			// If the message is "pong" reply with "Ping!"
-			if command == "pong" {
-				s.ChannelMessageSend(m.ChannelID, "Ping!")
+			switch command {
+			case "help":
+				s.ChannelMessageSend(m.ChannelID, "Help Message...")
+				break
+			case "latency":
+				s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
+					Title:       "Latency to server",
+					Description: fmt.Sprint(s.HeartbeatLatency()),
+				})
+				break
+			default:
+				break
 			}
 		}
 	}
