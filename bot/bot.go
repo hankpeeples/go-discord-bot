@@ -6,12 +6,21 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/hankpeeples/go-discord-bot/utils"
 )
 
-var log = utils.NewLogger()
+var (
+	log    = utils.NewLogger()
+	red    = 0xf54248
+	blue   = 0x42b9f5
+	green  = 0x28de4f
+	footer = &discordgo.MessageEmbedFooter{
+		Text: "Last bot reboot: " + time.Now().Format("Mon, 02 Jan 2006 15:04:05"),
+	}
+)
 
 // Start will begin a new discord bot session
 func Start(token string) {
@@ -66,11 +75,11 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 
 	if len(m.Content) >= 1 {
-		// Log received commands
-		log.Infof("[%s]: %s", m.Author, m.Content)
 		// Only look for commands that begin with defined prefix character
 		if m.Content[0:1] == utils.Prefix {
-			// Set command to the 'command' after the prefix character
+			// Log received commands
+			log.Infof("[%s]: %s", m.Author, m.Content)
+			// Set command to the string after the prefix character
 			command := m.Content[1:]
 
 			switch command {
@@ -88,13 +97,16 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 							Value: "Shows the bots current latency to the server.",
 						},
 					},
+					Color:  blue,
+					Footer: footer,
 				})
 				break
 			case "latency":
 				s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
 					Title:       "Latency to server",
 					Description: fmt.Sprint(s.HeartbeatLatency()),
-					Color:       16729692,
+					Color:       green,
+					Footer:      footer,
 				})
 				break
 			default:
