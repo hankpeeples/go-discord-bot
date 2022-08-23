@@ -9,16 +9,18 @@ import (
 	"github.com/hankpeeples/go-discord-bot/utils"
 )
 
+var log = utils.NewLogger()
+
 func main() {
 	// Make sure config.json file was given as an argument
 	if len(os.Args) != 2 {
-		utils.Logger.Fatalf("Usage: ./{binary} config.json")
+		log.Fatalf("Usage: ./{binary} config.json")
 	}
 
 	// Read config file for bot Token
 	token, err := utils.ReadConfig(os.Args[1])
 	if err != nil {
-		utils.Logger.Fatalf("ReadConfig(): %v\n", err)
+		log.Fatalf("ReadConfig(): %v\n", err)
 	}
 
 	// Start Bot

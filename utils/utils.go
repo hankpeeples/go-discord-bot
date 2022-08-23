@@ -5,11 +5,8 @@ import (
 	"encoding/json"
 	"os"
 
-	"github.com/withmandala/go-log"
+	logger "github.com/withmandala/go-log"
 )
-
-// Logger initialization
-var Logger *log.Logger = log.New(os.Stdout).WithColor()
 
 // Prefix is the bot command character prefix
 const Prefix string = "?"
@@ -18,11 +15,19 @@ type configStruct struct {
 	Token string `json:"Token"`
 }
 
-var conf *configStruct
+var (
+	conf *configStruct
+	log  = NewLogger()
+)
+
+// NewLogger returns a new instance of a logger
+func NewLogger() *logger.Logger {
+	return logger.New(os.Stdout).WithColor()
+}
 
 // ReadConfig reads the config file for the bot Token
 func ReadConfig(filepath string) (string, error) {
-	Logger.Info("Looking for discord token...")
+	log.Info("Looking for discord token...")
 	// Read file content
 	content, err := os.ReadFile(filepath)
 	if err != nil {
@@ -35,6 +40,6 @@ func ReadConfig(filepath string) (string, error) {
 		return "", err
 	}
 
-	Logger.Info("Discord token received successfully!")
+	log.Info("Discord token received successfully!")
 	return conf.Token, nil
 }

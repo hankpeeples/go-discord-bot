@@ -11,13 +11,15 @@ import (
 	"github.com/hankpeeples/go-discord-bot/utils"
 )
 
+var log = utils.NewLogger()
+
 // Start will begin a new discord bot session
 func Start(token string) {
-	utils.Logger.Info("Attempting to start bot session...")
+	log.Info("Attempting to start bot session...")
 	// Create discord session
 	dg, err := discordgo.New("Bot " + token)
 	if err != nil {
-		utils.Logger.Fatalf("Error creating discord session: %v", err)
+		log.Fatalf("Error creating discord session: %v", err)
 	}
 
 	// Register ready func as callback for ready events
@@ -32,35 +34,40 @@ func Start(token string) {
 	// Open websocket and begin listening
 	err = dg.Open()
 	if err != nil {
-		utils.Logger.Fatalf("Error opening websocket: %v", err)
+		log.Fatalf("Error opening websocket: %v", err)
 	}
 
-	utils.Logger.Info("Session open and listening ✅")
+	log.Info("Session open and listening ✅")
 	// Wait here for ctrl-c or other termination signal
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
 	<-sc
 
-	utils.Logger.Warn("Session terminated!")
+	log.Warn("Session terminated!")
 	// close discordgo session after kill signal is received
 	dg.Close()
 }
 
 func ready(s *discordgo.Session, event *discordgo.Ready) {
 	// Set status message
-	s.UpdateListeningStatus(utils.Prefix + "help")
+	err := s.UpdateListeningStatus(utils.Prefix + "help")
+	if err != nil {
+		log.Error("Status message was NOT updated...")
+		return
+	}
+	log.Info("Bot status message updated successfully")
 }
 
 // messageCreate will be called every time a new message is sent
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
-	utils.Logger.Infof("[%s]: %s", m.Author, m.Content)
-
 	// Ignore all messages created by the bot itself
 	if m.Author.ID == s.State.User.ID {
 		return
 	}
 
 	if len(m.Content) >= 1 {
+		// Log received commands
+		log.Infof("[%s]: %s", m.Author, m.Content)
 		// Only look for commands that begin with defined prefix character
 		if m.Content[0:1] == utils.Prefix {
 			// Set command to the 'command' after the prefix character
@@ -68,12 +75,26 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 			switch command {
 			case "help":
-				s.ChannelMessageSend(m.ChannelID, "Help Message...")
+				s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
+					Title:       "Commands",
+					Description: "Use '" + utils.Prefix + "' before each command. These commands ARE case sensitive.",
+					Fields: []*discordgo.MessageEmbedField{
+						{
+							Name:  "help",
+							Value: "Shows this message!",
+						},
+						{
+							Name:  "latency",
+							Value: "Shows the bots current latency to the server.",
+						},
+					},
+				})
 				break
 			case "latency":
 				s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
 					Title:       "Latency to server",
 					Description: fmt.Sprint(s.HeartbeatLatency()),
+					Color:       16729692,
 				})
 				break
 			default:
