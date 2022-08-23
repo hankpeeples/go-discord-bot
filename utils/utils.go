@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"os"
 
+	"github.com/bwmarrin/discordgo"
 	logger "github.com/withmandala/go-log"
 )
 
@@ -42,4 +43,11 @@ func ReadConfig(filepath string) (string, error) {
 
 	log.Info("Discord token received successfully!")
 	return conf.Token, nil
+}
+
+// HandleEmbedFailure delivers a message to the channel that something
+// went wrong when trying to send an embed
+func HandleEmbedFailure(s *discordgo.Session, m *discordgo.MessageCreate, err error) {
+	s.ChannelMessageSend(m.ChannelID, "Something broke... Couldn't send embedded message.")
+	log.Error("Embed error: ", err)
 }

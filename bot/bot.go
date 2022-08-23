@@ -84,7 +84,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 			switch command {
 			case "help":
-				s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
+				_, err := s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
 					Title:       "Commands",
 					Description: "Use '" + utils.Prefix + "' before each command. These commands ARE case sensitive.",
 					Fields: []*discordgo.MessageEmbedField{
@@ -100,16 +100,31 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 					Color:  blue,
 					Footer: footer,
 				})
+				if err != nil {
+					utils.HandleEmbedFailure(s, m, err)
+				}
 				break
+
 			case "latency":
-				s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
+				_, err := s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
 					Title:       "Latency to server",
 					Description: fmt.Sprint(s.HeartbeatLatency()),
 					Color:       green,
 					Footer:      footer,
 				})
+				if err != nil {
+					utils.HandleEmbedFailure(s, m, err)
+				}
 				break
+
 			default:
+				_, err := s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
+					Description: fmt.Sprintf("`%s` is not a command...", command),
+					Color:       red,
+				})
+				if err != nil {
+					utils.HandleEmbedFailure(s, m, err)
+				}
 				break
 			}
 		}
