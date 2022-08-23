@@ -20,6 +20,8 @@ var (
 	footer = &discordgo.MessageEmbedFooter{
 		Text: "Last bot reboot: " + time.Now().Format("Mon, 02 Jan 2006 15:04:05"),
 	}
+	airhorn       = make([][]byte, 0)
+	airhornLoaded = true
 )
 
 // Start will begin a new discord bot session
@@ -29,6 +31,12 @@ func Start(token string) {
 	dg, err := discordgo.New("Bot " + token)
 	if err != nil {
 		log.Fatalf("Error creating discord session: %v", err)
+	}
+
+	// Load airhorn sound
+	err = LoadAirhorn()
+	if err != nil {
+		airhornLoaded = false
 	}
 
 	// Register ready func as callback for ready events
@@ -114,6 +122,53 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 				})
 				if err != nil {
 					utils.HandleEmbedFailure(s, m, err)
+				}
+				break
+
+			case "airhorn":
+				// Make sure airhorn sound file was loaded successfully
+				if airhornLoaded {
+					// Find channel that issued command
+					c, err := s.State.Channel(m.ChannelID)
+					if err != nil {
+						log.Error("Could not find channel: %s", err)
+						return
+					}
+
+					// find guild for above channel
+					g, err := s.State.Guild(c.GuildID)
+					if err != nil {
+						log.Error("Could not find guild: %s", err)
+						return
+					}
+
+					userVcFound := false
+					// Look for message sender in that guilds voice states
+					for _, vc := range g.VoiceStates {
+						if vc.UserID == m.Author.ID {
+							userVcFound = true
+							err = PlaySound(s, g.ID, vc.ChannelID)
+							if err != nil {
+								s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
+									Description: "Unable to play airhorn audio at this time...",
+									Color:       red,
+								})
+								return
+							}
+							return
+						}
+					}
+					if !userVcFound {
+						s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
+							Description: "You need to be in a voice channel to use this command!",
+							Color:       red,
+						})
+					}
+				} else {
+					s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
+						Description: "Airhorn was not loaded on bot start, please reboot me and try again.",
+						Color:       red,
+					})
 				}
 				break
 
