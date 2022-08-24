@@ -89,7 +89,8 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			case "help":
 				_, err := s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
 					Title:       "Commands",
-					Description: "Use '" + utils.Prefix + "' before each command. These commands ARE case sensitive.",
+					Description: "Use '" + utils.Prefix + "' before each command. These commands ARE case sensitive. \nClick the title to see the code that created me.",
+					URL:         "https://github.com/hankpeeples/go-discord-bot",
 					Fields: []*discordgo.MessageEmbedField{
 						{
 							Name:  "help",
@@ -98,6 +99,14 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 						{
 							Name:  "latency",
 							Value: "Shows the bots current latency to the server.",
+						},
+						{
+							Name:  "airhorn",
+							Value: "Join a voice channel and try it ;)",
+						},
+						{
+							Name:  "x-games-mode",
+							Value: "Join a voice channel and try it ;)",
 						},
 					},
 					Color:  blue,
