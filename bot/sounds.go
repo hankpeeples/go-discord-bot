@@ -2,6 +2,7 @@ package bot
 
 import (
 	"encoding/binary"
+	"fmt"
 	"io"
 	"os"
 	"time"
@@ -71,6 +72,45 @@ func readSoundFile(name string, file *os.File) error {
 	}
 
 	return nil
+}
+
+func initializeSound(s *discordgo.Session, m *discordgo.MessageCreate, sound string) {
+	// Find channel that issued command
+	c, err := s.State.Channel(m.ChannelID)
+	if err != nil {
+		log.Error("Could not find channel: %s", err)
+		return
+	}
+
+	// find guild for above channel
+	g, err := s.State.Guild(c.GuildID)
+	if err != nil {
+		log.Error("Could not find guild: %s", err)
+		return
+	}
+
+	userVcFound := false
+	// Look for message sender in that guilds voice states
+	for _, vc := range g.VoiceStates {
+		if vc.UserID == m.Author.ID {
+			userVcFound = true
+			err = PlaySound(s, g.ID, vc.ChannelID, sound)
+			if err != nil {
+				s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
+					Description: fmt.Sprintf("Unable to play %s audio at this time...", sound),
+					Color:       red,
+				})
+				return
+			}
+			return
+		}
+	}
+	if !userVcFound {
+		s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
+			Description: "You need to be in a voice channel to use this command!",
+			Color:       red,
+		})
+	}
 }
 
 // PlaySound plays the airhorn sound in the callers voice channel
