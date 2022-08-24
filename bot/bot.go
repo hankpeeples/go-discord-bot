@@ -102,11 +102,15 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 						},
 						{
 							Name:  "airhorn",
-							Value: "Join a voice channel and try it ;)",
+							Value: "Plays airhorn sound. (Must be in a voice channel)",
 						},
 						{
 							Name:  "x-games-mode",
-							Value: "Join a voice channel and try it ;)",
+							Value: "Plays x-games-mode sound. (Must be in a voice channel)",
+						},
+						{
+							Name:  "goofy",
+							Value: "Plays goofy trials sound. (Must be in a voice channel)",
 						},
 					},
 					Color:  blue,
