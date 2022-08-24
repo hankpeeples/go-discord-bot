@@ -79,7 +79,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	if len(m.Content) >= 1 {
 		// Only look for commands that begin with defined prefix character
-		if m.Content[0:1] == utils.Prefix {
+		if m.Content[0:1] == utils.Prefix && (m.ChannelID == "706588663747969107" || m.ChannelID == "706431216336896012") {
 			// Log received commands
 			log.Infof("[%s]: %s", m.Author, m.Content)
 			// Set command to the string after the prefix character
@@ -175,6 +175,19 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 					utils.HandleEmbedFailure(s, m, err)
 				}
 				break
+			}
+		} else {
+			if m.Content[0:1] == utils.Prefix {
+				_, err := s.ChannelMessageSendEmbedReply(m.ChannelID, &discordgo.MessageEmbed{
+					Description: "Please use bot commands in the `bot-commands` text channel.",
+					Color:       red,
+				}, &discordgo.MessageReference{
+					ChannelID: m.ChannelID,
+					MessageID: m.ID,
+				})
+				if err != nil {
+					utils.HandleEmbedFailure(s, m, err)
+				}
 			}
 		}
 	}
