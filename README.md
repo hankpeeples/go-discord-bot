@@ -4,8 +4,8 @@ This is my attempt at building a discord bot using Golang. The [discordGo](https
 ### How to run
 In development I simply run `make` to build (for macOS) and run the bot in one command. 
 
-Run `make build` to build.
-Then run `make run` to start the bot.
+- Run `make build` to build.
+- Then run `make run` to start the bot.
 
 If you need to build for linux or windows, simply uncomment the needed build command in the Makefile.
 
