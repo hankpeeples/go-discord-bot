@@ -12,6 +12,7 @@ import (
 
 var airhornBuffer = make([][]byte, 0)
 var xGamesModeBuffer = make([][]byte, 0)
+var goofyBuffer = make([][]byte, 0)
 
 // LoadSounds loads in the .dca sound files
 func LoadSounds() {
@@ -27,8 +28,14 @@ func LoadSounds() {
 		log.Errorf("Unable to open x-games-mode.dca: %s", err)
 	}
 
+	goofy, err := os.Open("assets/goofy.dca")
+	if err != nil {
+		log.Errorf("Unable to open goofy.dca: %s", err)
+	}
+
 	readSoundFile("airhorn", airhorn)
 	readSoundFile("x-games-mode", xgames)
+	readSoundFile("goofy", goofy)
 }
 
 func readSoundFile(name string, file *os.File) error {
@@ -69,6 +76,8 @@ func readSoundFile(name string, file *os.File) error {
 		airhornBuffer = buffer
 	} else if name == "x-games-mode" {
 		xGamesModeBuffer = buffer
+	} else if name == "goofy" {
+		goofyBuffer = buffer
 	}
 
 	return nil
@@ -121,6 +130,8 @@ func PlaySound(s *discordgo.Session, guildID, channelID string, sound string) er
 		buffer = airhornBuffer
 	} else if sound == "x-games-mode" {
 		buffer = xGamesModeBuffer
+	} else if sound == "goofy" {
+		buffer = goofyBuffer
 	}
 
 	// Join voice channel

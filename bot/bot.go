@@ -141,6 +141,10 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 				initializeSound(s, m, "x-games-mode")
 				break
 
+			case "goofy":
+				initializeSound(s, m, "goofy")
+				break
+
 			default:
 				_, err := s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
 					Description: fmt.Sprintf("`%s` is not a command...", command),
