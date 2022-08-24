@@ -106,7 +106,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 						},
 						{
 							Name:  "x-games-mode",
-							Value: "Plays x-games-mode sound. (Must be in a voice channel)",
+							Value: "Plays x games mode sound. (Must be in a voice channel)",
 						},
 						{
 							Name:  "goofy",
@@ -134,14 +134,35 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 				break
 
 			case "airhorn":
+				_, err := s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
+					Description: "Playing airhorn sound",
+					Color:       blue,
+				})
+				if err != nil {
+					utils.HandleEmbedFailure(s, m, err)
+				}
 				initializeSound(s, m, "airhorn")
 				break
 
 			case "x-games-mode":
+				_, err := s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
+					Description: "Playing x games mode sound",
+					Color:       blue,
+				})
+				if err != nil {
+					utils.HandleEmbedFailure(s, m, err)
+				}
 				initializeSound(s, m, "x-games-mode")
 				break
 
 			case "goofy":
+				_, err := s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
+					Description: "Playing goofy trials sound",
+					Color:       blue,
+				})
+				if err != nil {
+					utils.HandleEmbedFailure(s, m, err)
+				}
 				initializeSound(s, m, "goofy")
 				break
 
