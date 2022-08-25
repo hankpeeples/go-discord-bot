@@ -11,7 +11,7 @@ import (
 func HelpCommand(s *discordgo.Session, m *discordgo.MessageCreate) {
 	_, err := s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
 		Title:       "Commands",
-		Description: "Use '" + utils.Prefix + "' before each command. These commands ARE case sensitive. \nClick the title to see the code that created me.",
+		Description: "Use '" + utils.Prefix + "' before each command.\nClick the title to see the code that created me.",
 		URL:         "https://github.com/hankpeeples/go-discord-bot",
 		Fields: []*discordgo.MessageEmbedField{
 			{
@@ -58,35 +58,42 @@ func LatencyCommand(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 // AirhornCommand is run from the 'airhorn' command
 func AirhornCommand(s *discordgo.Session, m *discordgo.MessageCreate) {
-	_, err := s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
-		Description: "Playing airhorn sound",
-		Color:       blue,
-	})
-	if err != nil {
-		utils.HandleEmbedFailure(s, m, err)
+	err := initializeSound(s, m, "airhorn")
+	if err == nil {
+		_, err = s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
+			Description: "Playing airhorn sound",
+			Color:       blue,
+		})
+		if err != nil {
+			utils.HandleEmbedFailure(s, m, err)
+		}
 	}
-	initializeSound(s, m, "airhorn")
 }
 
 // XgamesModeCommand is run from the 'x-games-mode' command
 func XgamesModeCommand(s *discordgo.Session, m *discordgo.MessageCreate) {
-	_, err := s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
-		Description: "Playing x games mode sound",
-		Color:       blue,
-	})
-	if err != nil {
-		utils.HandleEmbedFailure(s, m, err)
+	err := initializeSound(s, m, "x-games-mode")
+	if err == nil {
+		_, err = s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
+			Description: "Playing x games mode sound",
+			Color:       blue,
+		})
+		if err != nil {
+			utils.HandleEmbedFailure(s, m, err)
+		}
 	}
-	initializeSound(s, m, "x-games-mode")
 }
 
 // GoofyCommand is run from the 'goofy` command`
 func GoofyCommand(s *discordgo.Session, m *discordgo.MessageCreate) {
-	_, err := s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
-		Description: "Playing goofy trials sound",
-		Color:       blue,
-	})
-	if err != nil {
-		utils.HandleEmbedFailure(s, m, err)
+	err := initializeSound(s, m, "goofy")
+	if err == nil {
+		_, err = s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
+			Description: "Playing goofy trials sound",
+			Color:       blue,
+		})
+		if err != nil {
+			utils.HandleEmbedFailure(s, m, err)
+		}
 	}
 }
