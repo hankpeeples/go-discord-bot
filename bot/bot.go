@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -79,13 +80,24 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	if len(m.Content) >= 1 {
 		// Only look for commands that begin with defined prefix character
-		if m.Content[0:1] == utils.Prefix && (m.ChannelID == "706588663747969107" || m.ChannelID == "706431216336896012") {
+		if strings.HasPrefix(m.Content, utils.Prefix) && (m.ChannelID == "706588663747969107" || m.ChannelID == "706431216336896012") {
 			// Log received commands
 			log.Infof("[%s]: %s", m.Author, m.Content)
-			// Set command to the string after the prefix character
-			command := m.Content[1:]
 
-			switch command {
+			// Split string by whitespace (after prefix), for commands
+			// that can accept arguments
+			command := strings.Fields(m.Content[1:])
+			// Set args to the strings after the command name
+			var args []string
+			for i, arg := range command {
+				// skip command name
+				if i == 0 {
+					continue
+				}
+				args = append(args, arg)
+			}
+
+			switch command[0] {
 			case "help":
 				HelpCommand(s, m)
 				break
@@ -106,13 +118,9 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 				GoofyCommand(s, m)
 				break
 
-			case "info":
-				// ?info <username>
-				break
-
 			default:
 				_, err := s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
-					Description: fmt.Sprintf("`%s` is not a command...", command),
+					Description: fmt.Sprintf("`%s` is not a command...", command[0]),
 					Color:       red,
 				})
 				if err != nil {
@@ -121,7 +129,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 				break
 			}
 		} else {
-			if m.Content[0:1] == utils.Prefix {
+			if strings.HasPrefix(m.Content, utils.Prefix) {
 				_, err := s.ChannelMessageSendEmbedReply(m.ChannelID, &discordgo.MessageEmbed{
 					Description: "Please use bot commands in the `bot-commands` text channel.",
 					Color:       red,

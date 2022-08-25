@@ -89,5 +89,4 @@ func GoofyCommand(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if err != nil {
 		utils.HandleEmbedFailure(s, m, err)
 	}
-	initializeSound(s, m, "goofy")
 }
