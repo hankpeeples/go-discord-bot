@@ -91,48 +91,23 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 				break
 
 			case "latency":
-				_, err := s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
-					Title:       "Latency to server",
-					Description: fmt.Sprint(s.HeartbeatLatency()),
-					Color:       green,
-					Footer:      footer,
-				})
-				if err != nil {
-					utils.HandleEmbedFailure(s, m, err)
-				}
+				LatencyCommand(s, m)
 				break
 
 			case "airhorn":
-				_, err := s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
-					Description: "Playing airhorn sound",
-					Color:       blue,
-				})
-				if err != nil {
-					utils.HandleEmbedFailure(s, m, err)
-				}
-				initializeSound(s, m, "airhorn")
+				AirhornCommand(s, m)
 				break
 
 			case "x-games-mode":
-				_, err := s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
-					Description: "Playing x games mode sound",
-					Color:       blue,
-				})
-				if err != nil {
-					utils.HandleEmbedFailure(s, m, err)
-				}
-				initializeSound(s, m, "x-games-mode")
+				XgamesModeCommand(s, m)
 				break
 
 			case "goofy":
-				_, err := s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
-					Description: "Playing goofy trials sound",
-					Color:       blue,
-				})
-				if err != nil {
-					utils.HandleEmbedFailure(s, m, err)
-				}
-				initializeSound(s, m, "goofy")
+				GoofyCommand(s, m)
+				break
+
+			case "info":
+				// ?info <username>
 				break
 
 			default:
